@@ -36,8 +36,8 @@ const GradeReportCard = () => {
           </div>
           <div className="flex flex-wrap gap-2 mt-4">
             <span className="badge bg-success text-success-content">A: 90-100</span>
-            <span className="badge bg-warning text-warning-content">B: 80-89</span>
-            <span className="badge bg-error text-error-content">Fail: Below 80</span>
+            <span className="badge bg-warning text-warning-content">B: 50-89</span>
+            <span className="badge bg-error text-error-content">Fail: Below 50</span>
           </div>
         </div>
       </div>
