@@ -1,61 +1,55 @@
 # Student Report Card System
 
-This is a React application built with Vite that manages student report cards using a **URL-driven state architecture**. The project serves as a demonstration of state management where the URL acts as the single source of truth, bypassing traditional React state hooks for global data.
+This React application uses a **URL-driven state architecture**. It demonstrates state management where the URL is the single source of truth, bypassing `useState` and `useMemo` for global data.
 
 ---
 
 ## Project Constraints
 
-* **No useState**: Component state for filtering, sorting, and view switching is derived directly from the URL via `useSyncExternalStore`.
-* **Vanilla URL Management**: The application uses native `window.history.pushState` and `URLSearchParams` rather than a third-party routing library.
-* **Custom Subscription System**: A custom event dispatcher (`urlchange`) ensures the UI stays in sync with programmatic URL updates.
+* **No useState**: State is derived from URL via `useSyncExternalStore`.
+* **Vanilla URL Management**: Uses `window.history.pushState` and `URLSearchParams`.
+* **Custom Subscription**: A `urlchange` event keeps the UI in sync with programmatic updates.
 
 ---
 
 ## Features
 
 ### 1. List View
-A tabular representation of student performance data.
-* **Filtering**: Filter students by grade (A, B, or Fail).
-* **Searching**: Real-time name search that persists in the URL.
-* **Sorting**: Toggle between sorting by name or numerical score.
+
+Tabular data with filtering, searching, and sorting.
 
 ### 2. Carousel View
-An interactive 3D display for browsing student cards.
-* **Auto-scroll**: The carousel advances automatically and pauses on hover.
-* **3D Hover Effects**: Cards utilize CSS perspective for an immersive feel.
-* **State Persistence**: Because state is stored in the URL, all filters and search terms remain active when switching between List and Carousel views.
+
+3D display with auto-scroll and hover effects.
+
+### 3. State Persistence
+
+Filters remain active when switching views via URL parameters.
 
 ---
 
 ## Visuals
 
 ### List View Screenshot
-(Space reserved for List View screenshot)
+
+(Space reserved)
 
 ### Carousel View Screenshot
-(Space reserved for Carousel View screenshot)
+
+(Space reserved)
 
 ---
 
 ## Technical Implementation
 
-### Core Architecture
-* **Store (`urlState.ts`)**: Manages reading and writing parameters. It handles the logic for the "all" grade filter and ensures parameters are deleted when empty to keep URLs clean.
-* **Hooks**: `useFiltersFromUrl` and `useViewFromUrl` subscribe to both `popstate` (browser navigation) and `urlchange` (internal updates).
-* **Grade Logic**: The `getGradeInfo` utility maps scores to `GradeLabel` and `GradeClass` enums to ensure visual consistency.
-
-
-
-### Tech Stack
-* **Framework**: React (Vite)
-* **Language**: TypeScript
-* **Styling**: Tailwind CSS + DaisyUI
+* **Store (urlState.ts)**: Handles parameter logic and the "all" grade filter.
+* **Hooks**: `useFiltersFromUrl` and `useViewFromUrl` subscribe to `popstate` and `urlchange`.
+* **Grade Logic**: `getGradeInfo` maps scores to labels and CSS classes.
 
 ---
 
 ## Getting Started
 
-1. **Clone the repository**
-2. **Install dependencies**
-  
+1. **Install**: `npm install`
+2. **Dev**: `npm run dev`
+3. **Build**: `npm run build`
