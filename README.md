@@ -1,73 +1,61 @@
-# React + TypeScript + Vite
+# Student Report Card System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a React application built with Vite that manages student report cards using a **URL-driven state architecture**. The project serves as a demonstration of state management where the URL acts as the single source of truth, bypassing traditional React state hooks for global data.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Project Constraints
 
-## React Compiler
+* **No useState**: Component state for filtering, sorting, and view switching is derived directly from the URL via `useSyncExternalStore`.
+* **Vanilla URL Management**: The application uses native `window.history.pushState` and `URLSearchParams` rather than a third-party routing library.
+* **Custom Subscription System**: A custom event dispatcher (`urlchange`) ensures the UI stays in sync with programmatic URL updates.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. List View
+A tabular representation of student performance data.
+* **Filtering**: Filter students by grade (A, B, or Fail).
+* **Searching**: Real-time name search that persists in the URL.
+* **Sorting**: Toggle between sorting by name or numerical score.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 2. Carousel View
+An interactive 3D display for browsing student cards.
+* **Auto-scroll**: The carousel advances automatically and pauses on hover.
+* **3D Hover Effects**: Cards utilize CSS perspective for an immersive feel.
+* **State Persistence**: Because state is stored in the URL, all filters and search terms remain active when switching between List and Carousel views.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Visuals
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### List View Screenshot
+(Space reserved for List View screenshot)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Carousel View Screenshot
+(Space reserved for Carousel View screenshot)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## Technical Implementation
+
+### Core Architecture
+* **Store (`urlState.ts`)**: Manages reading and writing parameters. It handles the logic for the "all" grade filter and ensures parameters are deleted when empty to keep URLs clean.
+* **Hooks**: `useFiltersFromUrl` and `useViewFromUrl` subscribe to both `popstate` (browser navigation) and `urlchange` (internal updates).
+* **Grade Logic**: The `getGradeInfo` utility maps scores to `GradeLabel` and `GradeClass` enums to ensure visual consistency.
+
+
+
+### Tech Stack
+* **Framework**: React (Vite)
+* **Language**: TypeScript
+* **Styling**: Tailwind CSS + DaisyUI
+
+---
+
+## Getting Started
+
+1. **Clone the repository**
+2. **Install dependencies**
+  
