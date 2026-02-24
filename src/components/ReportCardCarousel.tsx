@@ -1,10 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { students } from "../data/students";
 import Hover3DStudentCard from "./Hover3dStudentCard";
+import { getGradeInfo } from "../utils/gradeHelper";
+import { setUrlParam } from "../utils/urlState";
+import { useFiltersFromUrl } from "../hooks/useFiltersFromUrl";
+
 
 const ReportCardCarousel = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+
+  const { grade, sort, search } = useFiltersFromUrl();
+
+  const filteredStudents = [...students]
+    .filter((s) =>
+      s.name.toLowerCase().includes(search.toLowerCase())
+    )
+    .filter((s) => {
+      if (grade === "all") return true;
+      return getGradeInfo(s.score).label === grade;
+    })
+    .sort((a, b) => {
+      if (sort === "name") return a.name.localeCompare(b.name);
+      return b.score - a.score;
+    });
 
   useEffect(() => {
     if (isHovered) return;
@@ -13,13 +32,7 @@ const ReportCardCarousel = () => {
       const container = carouselRef.current;
       if (!container) return;
 
-      const scrollAmount = 280;
-
-      container.scrollBy({
-        left: scrollAmount,
-        behavior: "smooth",
-      });
-
+      container.scrollBy({ left: 280, behavior: "smooth" });
 
       if (
         container.scrollLeft + container.clientWidth >=
@@ -39,32 +52,45 @@ const ReportCardCarousel = () => {
           Report Card Carousel
         </h2>
 
-        {/* Carousel */}
+        <div className="flex flex-wrap gap-3 mb-6 justify-center">
+          <input
+            type="text"
+            placeholder="Search student..."
+            className="input input-bordered"
+            defaultValue={search}
+            onChange={(e) => setUrlParam("search", e.target.value)}
+          />
+
+          <select
+            className="select select-bordered"
+            value={grade}
+            onChange={(e) => setUrlParam("grade", e.target.value)}
+          >
+            <option value="ALL">All Grades</option>
+            <option value="A">Grade A</option>
+            <option value="B">Grade B</option>
+            <option value="Fail">Fail</option>
+          </select>
+
+          <select
+            className="select select-bordered"
+            value={sort}
+            onChange={(e) => setUrlParam("sort", e.target.value)}
+          >
+            <option value="name">Sort by Name</option>
+            <option value="score">Sort by Score</option>
+          </select>
+        </div>
+
         <div
           ref={carouselRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           className="flex gap-6 overflow-x-auto pb-6 scroll-smooth [perspective:1000px]"
         >
-          {students.map((student) => (
-            <Hover3DStudentCard
-              key={student.id}
-              student={student}
-            />
+          {filteredStudents.map((student) => (
+            <Hover3DStudentCard key={student.id} student={student} />
           ))}
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap gap-2 mt-6 justify-center">
-          <span className="badge bg-success text-success-content">
-            A: 90-100
-          </span>
-          <span className="badge bg-warning text-warning-content">
-            B: 50-89
-          </span>
-          <span className="badge bg-error text-error-content">
-            Fail: Below 50
-          </span>
         </div>
       </div>
     </div>
