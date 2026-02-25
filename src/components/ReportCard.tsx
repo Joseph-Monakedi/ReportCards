@@ -2,23 +2,20 @@ import { students } from "../data/students";
 import { getGradeInfo } from "../utils/gradeHelper";
 import { setUrlParam } from "../utils/urlState";
 import { useFiltersFromUrl } from "../hooks/useFiltersFromUrl";
+import { GradeFilter, SortType } from "../utils/urlState";
 
 const GradeReportCard = () => {
-const { grade, sort, search } = useFiltersFromUrl();
+  const { grade, sort, search } = useFiltersFromUrl();
 
   const filteredStudents = [...students]
-    // 🔍 search
-    .filter((s) =>
-      s.name.toLowerCase().includes(search.toLowerCase())
-    )
-    // 🎯 grade filter
+
+    .filter((s) => s.name.toLowerCase().includes(search.toLowerCase()))
     .filter((s) => {
-      if (grade === "all") return true;
+      if (grade === GradeFilter.All) return true;
       return getGradeInfo(s.score).label === grade;
     })
-    // 🔤 sort
     .sort((a, b) => {
-      if (sort === "name") return a.name.localeCompare(b.name);
+      if (sort === SortType.name) return a.name.localeCompare(b.name);
       return b.score - a.score;
     });
 
@@ -28,9 +25,7 @@ const { grade, sort, search } = useFiltersFromUrl();
         <div className="card-body">
           <h2 className="card-title text-2xl mb-4">Grade Report Card</h2>
 
-          {/* 🔧 Controls */}
           <div className="flex flex-wrap gap-3 mb-4">
-            {/* search */}
             <input
               type="text"
               placeholder="Search student..."
@@ -39,30 +34,27 @@ const { grade, sort, search } = useFiltersFromUrl();
               onChange={(e) => setUrlParam("search", e.target.value)}
             />
 
-            {/* grade filter */}
             <select
               className="select select-bordered"
               value={grade}
               onChange={(e) => setUrlParam("grade", e.target.value)}
             >
-              <option value="all">All Grades</option>
-              <option value="A">Grade A</option>
-              <option value="B">Grade B</option>
-              <option value="Fail">Fail</option>
+              <option value={GradeFilter.All}>All Grades</option>
+              <option value={GradeFilter.All}>Grade A</option>
+              <option value={GradeFilter.All}>Grade B</option>
+              <option value={GradeFilter.All}>Fail</option>
             </select>
 
-            {/* sort */}
             <select
               className="select select-bordered"
               value={sort}
               onChange={(e) => setUrlParam("sort", e.target.value)}
             >
-              <option value="name">Sort by Name</option>
-              <option value="score">Sort by Score</option>
+              <option value={SortType.name}>Sort by Name</option>
+              <option value={SortType.score}>Sort by Score</option>
             </select>
           </div>
 
-          {/* 📊 Table */}
           <div className="overflow-x-auto">
             <table className="table">
               <thead>

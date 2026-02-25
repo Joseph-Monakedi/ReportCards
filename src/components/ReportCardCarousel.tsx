@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { students } from "../data/students";
 import Hover3DStudentCard from "./Hover3dStudentCard";
 import { getGradeInfo } from "../utils/gradeHelper";
-import { setUrlParam } from "../utils/urlState";
+import { GradeFilter, setUrlParam, SortType } from "../utils/urlState";
 import { useFiltersFromUrl } from "../hooks/useFiltersFromUrl";
-
 
 const ReportCardCarousel = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
@@ -13,15 +12,13 @@ const ReportCardCarousel = () => {
   const { grade, sort, search } = useFiltersFromUrl();
 
   const filteredStudents = [...students]
-    .filter((s) =>
-      s.name.toLowerCase().includes(search.toLowerCase())
-    )
+    .filter((s) => s.name.toLowerCase().includes(search.toLowerCase()))
     .filter((s) => {
-      if (grade === "all") return true;
+      if (grade === GradeFilter.A) return true;
       return getGradeInfo(s.score).label === grade;
     })
     .sort((a, b) => {
-      if (sort === "name") return a.name.localeCompare(b.name);
+      if (sort === SortType.name) return a.name.localeCompare(b.name);
       return b.score - a.score;
     });
 
@@ -66,10 +63,10 @@ const ReportCardCarousel = () => {
             value={grade}
             onChange={(e) => setUrlParam("grade", e.target.value)}
           >
-            <option value="ALL">All Grades</option>
-            <option value="A">Grade A</option>
-            <option value="B">Grade B</option>
-            <option value="Fail">Fail</option>
+            <option value={GradeFilter.All}>All Grades</option>
+            <option value={GradeFilter.All}>Grade A</option>
+            <option value={GradeFilter.All}>Grade B</option>
+            <option value={GradeFilter.All}>Fail</option>
           </select>
 
           <select
@@ -77,8 +74,8 @@ const ReportCardCarousel = () => {
             value={sort}
             onChange={(e) => setUrlParam("sort", e.target.value)}
           >
-            <option value="name">Sort by Name</option>
-            <option value="score">Sort by Score</option>
+            <option value={SortType.name}>Sort by Name</option>
+            <option value={SortType.score}>Sort by Score</option>
           </select>
         </div>
 

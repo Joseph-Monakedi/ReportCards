@@ -1,7 +1,7 @@
 import GradeReportCard from "./components/ReportCard";
 import ReportCardCarousel from "./components/ReportCardCarousel";
 import { useViewFromUrl } from "./hooks/useViewFromUrl";
-import { setUrlParam } from "./utils/urlState";
+import { setUrlParam, ViewType } from "./utils/urlState";
 
 function App() {
   const view = useViewFromUrl();
@@ -35,8 +35,8 @@ function App() {
       </div>
 
       <main className="p-4">
-        {view === "list" && <GradeReportCard />}
-        {view === "carousel" && <ReportCardCarousel />}
+        {view === ViewType.list && <GradeReportCard />}
+        {view === ViewType.Carousel && <ReportCardCarousel />}
       </main>
     </div>
   );

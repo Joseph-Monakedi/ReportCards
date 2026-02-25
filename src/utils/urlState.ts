@@ -1,6 +1,16 @@
-export type ViewType = "list" | "carousel";
-export type SortType = "name" | "score";
-export type GradeFilter = "all" | "A" | "B" | "Fail";
+export enum ViewType {
+  list = "list",
+  Carousel = "carousel"
+}
+export enum SortType {
+  name = "name",
+  score = "score"}
+export enum GradeFilter {
+  All = "all" ,
+  A = "A",
+  B = "B" ,
+  Fail = "Fail"
+}
 
 const URL_CHANGE_EVENT = "urlchange";
 
@@ -30,7 +40,7 @@ export function setUrlParam(key: string, value: string) {
 
 export function getViewFromUrl(): ViewType {
   const params = getSearchParams();
-  return params.get("view") === "carousel" ? "carousel" : "list";
+  return params.get(("view")) === ViewType.Carousel ? ViewType.Carousel : ViewType.list;
 }
 
 
