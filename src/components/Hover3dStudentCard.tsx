@@ -12,7 +12,7 @@ const Hover3DStudentCard = ({ student }: Props) => {
   const grade = getGradeInfo(student.score);
 
   return (
-    <div className="hover-3d min-w-[260px] flex-shrink-0 cursor-pointer">
+    <div className="hover-3d min-w-[260px] mx-auto w-full flex-shrink-0 cursor-pointer">
 
       <div className="card bg-base-100 shadow-xl">
         <div className="card-body items-center text-center">

@@ -7,14 +7,14 @@ import { useFiltersFromUrl } from "../hooks/useFiltersFromUrl";
 
 const ReportCardCarousel = () => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const { grade, sort, search } = useFiltersFromUrl();
 
   const filteredStudents = [...students]
     .filter((s) => s.name.toLowerCase().includes(search.toLowerCase()))
     .filter((s) => {
-      if (grade === GradeFilter.A) return true;
+      if (grade === GradeFilter.All) return true;
       return getGradeInfo(s.score).label === grade;
     })
     .sort((a, b) => {
@@ -23,71 +23,106 @@ const ReportCardCarousel = () => {
     });
 
   useEffect(() => {
-    if (isHovered) return;
+    if (isPaused || filteredStudents.length <= 1) return;
 
     const interval = setInterval(() => {
       const container = carouselRef.current;
       if (!container) return;
 
-      container.scrollBy({ left: 280, behavior: "smooth" });
+      const isMobile = window.innerWidth < 640;
 
-      if (
-        container.scrollLeft + container.clientWidth >=
-        container.scrollWidth - 5
-      ) {
-        container.scrollTo({ left: 0, behavior: "smooth" });
+      if (isMobile) {
+
+        const scrollAmount = 350; 
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+          container.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          container.scrollBy({ top: scrollAmount, behavior: "smooth" });
+        }
+      } else {
+        const scrollAmount = container.offsetWidth * 0.65;
+        if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
+          container.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+        }
       }
-    }, 2500);
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [isHovered]);
+  }, [isPaused, filteredStudents.length]);
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-6">
-      <div className="w-full max-w-6xl">
-        <h2 className="text-3xl font-bold mb-6 text-center">
-          Report Card Carousel
+    <div className="min-h-screen w-full mx-auto py-6 sm:py-10 px-4">
+      <div className="w-full max-w-6xl mx-auto flex flex-col h-full">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+          Student Performance
         </h2>
 
-        <div className="flex flex-wrap gap-3 mb-6 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 mb-8 justify-center">
           <input
             type="text"
-            placeholder="Search student..."
-            className="input input-bordered"
+            placeholder="Search..."
+            className="input input-bordered w-full sm:max-w-xs"
             defaultValue={search}
             onChange={(e) => setUrlParam("search", e.target.value)}
           />
-
-          <select
-            className="select select-bordered"
-            value={grade}
-            onChange={(e) => setUrlParam("grade", e.target.value)}
-          >
-            <option value={GradeFilter.All}>All Grades</option>
-            <option value={GradeFilter.All}>Grade A</option>
-            <option value={GradeFilter.All}>Grade B</option>
-            <option value={GradeFilter.All}>Fail</option>
-          </select>
-
-          <select
-            className="select select-bordered"
-            value={sort}
-            onChange={(e) => setUrlParam("sort", e.target.value)}
-          >
-            <option value={SortType.name}>Sort by Name</option>
-            <option value={SortType.score}>Sort by Score</option>
-          </select>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <select
+              className="select select-bordered flex-1"
+              value={grade}
+              onChange={(e) => setUrlParam("grade", e.target.value)}
+            >
+              <option value={GradeFilter.All}>All Grades</option>
+              <option value={GradeFilter.A}>Grade A</option>
+              <option value={GradeFilter.B}>Grade B</option>
+              <option value={GradeFilter.Fail}>Fail</option>
+            </select>
+            <select
+              className="select select-bordered flex-1"
+              value={sort}
+              onChange={(e) => setUrlParam("sort", e.target.value)}
+            >
+              <option value={SortType.name}>Name</option>
+              <option value={SortType.score}>Score</option>
+            </select>
+          </div>
         </div>
+
 
         <div
           ref={carouselRef}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          className="flex gap-6 overflow-x-auto pb-6 scroll-smooth [perspective:1000px]"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          className={`
+            carousel carousel-center rounded-box p-4 gap-6
+            flex-col sm:flex-row
+            carousel-vertical sm:carousel-horizontal
+            h-[500px] sm:h-auto 
+            w-full  mx-auto
+          `}
         >
-          {filteredStudents.map((student) => (
-            <Hover3DStudentCard key={student.id} student={student} />
-          ))}
+          {filteredStudents.length > 0 ? (
+            filteredStudents.map((student) => (
+              <div 
+                key={student.id} 
+                className="carousel-item w-full mx-auto sm:w-auto flex justify-center py-4 sm:py-0"
+              >
+                <div className="w-full mx-auto max-w-[300px]">
+                  <Hover3DStudentCard student={student} />
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="carousel-item w-full flex justify-center items-center h-full text-neutral-content opacity-50">
+              No results found
+            </div>
+          )}
+        </div>
+
+        <div className="text-center sm:hidden text-xs text-gray-500 mt-4 animate-pulse">
+          Scroll down to browse
         </div>
       </div>
     </div>
